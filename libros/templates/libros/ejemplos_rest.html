@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplos API REST - Sistema de Biblioteca</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .nav {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 600;
+        }
+        .content { padding: 40px; }
+        .section { margin-bottom: 50px; }
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #28a745;
+        }
+        .api-card {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .api-card h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .method {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .method.get { background: #28a745; }
+        .method.post { background: #007bff; }
+        .method.put { background: #ffc107; color: #333; }
+        .method.delete { background: #dc3545; }
+        .endpoint {
+            background: #2d2d2d;
+            color: #4ec9b0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            word-break: break-all;
+        }
+        .example {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .example h4 {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #dcdcdc;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .response {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .try-it {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .try-it:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .params {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .params h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .params ul {
+            list-style: none;
+            padding: 0;
+        }
+        .params li {
+            padding: 5px 0;
+            color: #666;
+        }
+        .params code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+        #testResults { display: none; }
+        .effect-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Ejemplos API REST</h1>
+            <p>Guía completa con ejemplos prácticos de uso del API RESTful</p>
+        </div>
+        
+        <div class="nav">
+           
+            <a href="GUIA_INSTALACION_COMPLETA.html">Volver a la Guía</a>
+           
+        
+        <div class="content">
+            <!-- LIBROS -->
+            <div class="section">
+                <h2>📚 Gestión de Libros</h2>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Listar todos los libros</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/libros/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Obtiene una lista paginada de todos los libros con información completa.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> JSON con título, autor, editorial, ISBN, stock disponible, categoría y más.
+                    </p>
+                    <div class="example">
+                        <h4>Respuesta:</h4>
+                        <pre>{
+  "count": 7,
+  "results": [{
+    "id": 1,
+    "titulo": "Cien años de soledad",
+    "isbn": "9780307474728",
+    "autor_nombre": "Gabriel García Márquez",
+    "stock_disponible": 3,
+    "estado": "disponible"
+  }]
+}</pre>
+                    </div>
+                    <button class="try-it" onclick="testAPI('GET', '/api/libros/')">🧪 Probar</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Buscar libros</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/libros/?search=garcía</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Busca libros por título, autor o ISBN. Case-insensitive.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Lista filtrada de libros que coincidan con el criterio.
+                    </p>
+                    <div class="params">
+                        <h4>Variantes de búsqueda:</h4>
+                        <ul>
+                            <li><code>?search=amor</code> - Busca "amor" en título/autor/ISBN</li>
+                            <li><code>?categoria=1</code> - Filtra por categoría Ficción</li>
+                            <li><code>?estado=disponible</code> - Solo libros disponibles</li>
+                            <li><code>?autor=1</code> - Libros de García Márquez</li>
+                            <li><code>?search=cien&estado=disponible</code> - Combinar filtros</li>
+                        </ul>
+                    </div>
+                    <button class="try-it" onclick="testAPI('GET', '/api/libros/?search=garcía')">🧪 Buscar "garcía"</button>
+                    <button class="try-it" onclick="testAPI('GET', '/api/libros/?categoria=1')">🧪 Categoría Ficción</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Obtener libro específico</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/libros/1/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Obtiene detalles completos de un libro por su ID.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Objeto JSON con TODOS los campos del libro, incluyendo descripción, ubicación física, fechas, etc.
+                    </p>
+                    <button class="try-it" onclick="testAPI('GET', '/api/libros/1/')">🧪 Ver Libro #1</button>
+                    <button class="try-it" onclick="testAPI('GET', '/api/libros/4/')">🧪 Ver Libro #4</button>
+                </div>
+            </div>
+            
+            <!-- AUTORES -->
+            <div class="section">
+                <h2>✍️ Gestión de Autores</h2>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Listar autores</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/autores/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Lista todos los autores con biografía, nacionalidad y fecha de nacimiento.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Array con información completa de cada autor, incluyendo conteo de sus libros.
+                    </p>
+                    <div class="example">
+                        <h4>Ejemplo de respuesta:</h4>
+                        <pre>{
+  "results": [{
+    "id": 1,
+    "nombre": "Gabriel",
+    "apellido": "García Márquez",
+    "fecha_nacimiento": "1927-03-06",
+    "nacionalidad": "Colombiano",
+    "biografia": "Premio Nobel...",
+    "total_libros": 2
+  }]
+}</pre>
+                    </div>
+                    <button class="try-it" onclick="testAPI('GET', '/api/autores/')">🧪 Ver Autores</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Ver autor específico</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/autores/1/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Muestra información detallada de un autor y sus libros.
+                    </p>
+                    <button class="try-it" onclick="testAPI('GET', '/api/autores/1/')">🧪 García Márquez</button>
+                </div>
+            </div>
+            
+            <!-- PRESTAMOS -->
+            <div class="section">
+                <h2>📋 Gestión de Préstamos</h2>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Listar préstamos</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/prestamos/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Lista todos los préstamos con información del libro, usuario y fechas.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Array con préstamos mostrando estado, fechas de préstamo/devolución, multas.
+                    </p>
+                    <div class="params">
+                        <h4>Filtros disponibles:</h4>
+                        <ul>
+                            <li><code>?estado=activo</code> - Préstamos activos</li>
+                            <li><code>?estado=devuelto</code> - Préstamos ya devueltos</li>
+                            <li><code>?estado=vencido</code> - Préstamos vencidos</li>
+                            <li><code>?usuario=2</code> - Préstamos de un usuario específico</li>
+                            <li><code>?libro=1</code> - Préstamos de un libro específico</li>
+                        </ul>
+                    </div>
+                    <button class="try-it" onclick="testAPI('GET', '/api/prestamos/')">🧪 Todos</button>
+                    <button class="try-it" onclick="testAPI('GET', '/api/prestamos/?estado=activo')">🧪 Activos</button>
+                    <button class="try-it" onclick="testAPI('GET', '/api/prestamos/?estado=devuelto')">🧪 Devueltos</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3><span class="method post">POST</span> Crear préstamo</h3>
+                    <div class="endpoint">POST http://127.0.0.1:8000/api/prestamos/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Crea un nuevo préstamo y actualiza automáticamente el stock del libro.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Registro del préstamo creado + reduce stock_disponible del libro en 1.
+                    </p>
+                    <div class="example">
+                        <h4>Body JSON requerido:</h4>
+                        <pre>{
+  "libro": 3,
+  "usuario": 2,
+  "fecha_devolucion_esperada": "2026-02-15",
+  "notas": "Préstamo estándar"
+}</pre>
+                    </div>
+                    <div class="effect-box">
+                        <strong>Efectos automáticos:</strong><br>
+                        ✅ stock_disponible del libro se reduce en 1<br>
+                        ✅ Si stock llega a 0, estado del libro cambia a "prestado"<br>
+                        ✅ Se registra fecha de préstamo automáticamente<br>
+                        ✅ Estado inicial es "activo"
+                    </div>
+                    <p class="description"><em>Nota: Requiere autenticación de administrador</em></p>
+                </div>
+            </div>
+            
+            <!-- CATEGORIAS Y EDITORIALES -->
+            <div class="section">
+                <h2>🏷️ Categorías y Editoriales</h2>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Listar categorías</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/categorias/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Lista todas las categorías de libros con descripción.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> Array con id, nombre y descripción de cada categoría.
+                    </p>
+                    <button class="try-it" onclick="testAPI('GET', '/api/categorias/')">🧪 Ver Categorías</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Listar editoriales</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/editoriales/</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Lista editoriales con país, sitio web y fecha de fundación.
+                    </p>
+                    <button class="try-it" onclick="testAPI('GET', '/api/editoriales/')">🧪 Ver Editoriales</button>
+                </div>
+            </div>
+            
+            <!-- PAGINACION -->
+            <div class="section">
+                <h2>📄 Paginación</h2>
+                
+                <div class="api-card">
+                    <h3><span class="method get">GET</span> Navegación por páginas</h3>
+                    <div class="endpoint">GET http://127.0.0.1:8000/api/libros/?page=1</div>
+                    <p class="description">
+                        <strong>¿Qué hace?</strong> Divide resultados en páginas de 10 elementos cada una.
+                    </p>
+                    <p class="description">
+                        <strong>¿Qué genera?</strong> JSON con count total, URLs next/previous, y results de la página actual.
+                    </p>
+                    <div class="example">
+                        <h4>Estructura de respuesta:</h4>
+                        <pre>{
+  "count": 25,
+  "next": "http://127.0.0.1:8000/api/libros/?page=2",
+  "previous": null,
+  "results": [...]
+}</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CASOS DE USO -->
+            <div class="section">
+                <h2>💡 Casos de Uso Completos</h2>
+                
+                <div class="api-card">
+                    <h3>Caso 1: Usuario busca y presta un libro</h3>
+                    <div class="effect-box">
+                        <strong>Escenario:</strong> Usuario busca libros de García Márquez, verifica disponibilidad y solicita préstamo.
+                    </div>
+                    <div class="example">
+                        <h4>Paso 1: Buscar</h4>
+                        <pre>GET /api/libros/?search=garcía%20márquez</pre>
+                        <h4>Paso 2: Verificar stock</h4>
+                        <pre>GET /api/libros/1/
+→ Verifica stock_disponible > 0</pre>
+                        <h4>Paso 3: Crear préstamo</h4>
+                        <pre>POST /api/prestamos/
+{
+  "libro": 1,
+  "usuario": 2,
+  "fecha_devolucion_esperada": "2026-02-15"
+}</pre>
+                        <h4>Resultado:</h4>
+                        <div class="response">
+                            ✅ stock_disponible: 3 → 2<br>
+                            ✅ Préstamo creado con estado "activo"<br>
+                            ✅ Libro sigue "disponible" (hay más en stock)
+                        </div>
+                    </div>
+                    <button class="try-it" onclick="demonstrateCase1()">🧪 Demostrar Caso</button>
+                </div>
+                
+                <div class="api-card">
+                    <h3>Caso 2: Bibliotecario busca préstamos vencidos</h3>
+                    <div class="effect-box">
+                        <strong>Escenario:</strong> Necesita identificar usuarios con libros no devueltos a tiempo.
+                    </div>
+                    <div class="example">
+                        <pre>GET /api/prestamos/?estado=vencido</pre>
+                        <div class="response">
+                            Retorna lista con:<br>
+                            ✅ Préstamos donde fecha_devolucion_esperada < hoy<br>
+                            ✅ Información del usuario<br>
+                            ✅ Información del libro<br>
+                            ✅ Días de retraso<br>
+                            ✅ Multas aplicadas
+                        </div>
+                    </div>
+                    <button class="try-it" onclick="testAPI('GET', '/api/prestamos/?estado=vencido')">🧪 Ver Vencidos</button>
+                </div>
+            </div>
+            
+            <!-- TEST AREA -->
+            <div class="section">
+                <h2>🧪 Área de Pruebas</h2>
+                <div id="testResults">
+                    <div class="api-card">
+                        <h3>Resultado:</h3>
+                        <div id="testOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function testAPI(method, endpoint) {
+            const resultsDiv = document.getElementById('testResults');
+            const outputDiv = document.getElementById('testOutput');
+            
+            resultsDiv.style.display = 'block';
+            outputDiv.innerHTML = '<p>⏳ Realizando petición...</p>';
+            
+            try {
+                const response = await fetch(`http://127.0.0.1:8000${endpoint}`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                outputDiv.innerHTML = `
+                    <div class="response">
+                        <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Endpoint:</strong> ${method} ${endpoint}
+                    </div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                outputDiv.innerHTML = `<div style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px;">
+                    <strong>Error:</strong> ${error.message}
+                </div>`;
+            }
+        }
+        
+        async function demonstrateCase1() {
+            const resultsDiv = document.getElementById('testResults');
+            const outputDiv = document.getElementById('testOutput');
+            
+            resultsDiv.style.display = 'block';
+            outputDiv.innerHTML = '<p>⏳ Ejecutando demostración...</p>';
+            
+            try {
+                const search = await fetch('http://127.0.0.1:8000/api/libros/?search=garcía');
+                const searchData = await search.json();
+                
+                outputDiv.innerHTML = `
+                    <div class="example">
+                        <h4>Paso 1: Resultados de búsqueda</h4>
+                        <pre>${JSON.stringify(searchData.results[0], null, 2)}</pre>
+                    </div>
+                    <div class="example">
+                        <h4>Paso 2: Stock disponible</h4>
+                        <div class="response">✅ ${searchData.results[0].stock_disponible} unidades disponibles</div>
+                    </div>
+                    <div class="example">
+                        <h4>Paso 3: Para crear préstamo</h4>
+                        <p>Requiere autenticación. Usa: POST /api/prestamos/ con admin:admin123</p>
+                    </div>
+                `;
+                
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                outputDiv.innerHTML = `<div style="background: #ffebee; padding: 15px;">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh-oh'},{'server':'p3plzcpnl504927'},{'dcenter':'p3'},{'cp_id':'10837813'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

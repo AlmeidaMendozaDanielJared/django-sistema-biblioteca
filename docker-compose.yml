@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: biblioteca_mysql
+    restart: always
+    environment:
+      # AQUÍ ESTÁ EL CAMBIO: El nombre exacto que tú quieres
+      MYSQL_DATABASE: biblioteca_dbutres
+      # Configuración para usar root y tu contraseña '12345'
+      MYSQL_ROOT_PASSWORD: '12345'
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - biblioteca_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p12345"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicación Django
+  web:
+    build: .
+    container_name: biblioteca_web
+    restart: always
+    # Comando para esperar a la DB, migrar y correr el server
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    # Esto carga tu archivo .env automáticamente
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=biblioteca_project.settings
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+    networks:
+      - biblioteca_network
+
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: biblioteca_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/usr/share/nginx/html/static:ro
+    depends_on:
+      - web
+    networks:
+      - biblioteca_network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: biblioteca_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - biblioteca_network
+
+volumes:
+  mysql_data:
+  static_volume:
+  redis_data:
+
+networks:
+  biblioteca_network:
+    driver: bridge

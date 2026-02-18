@@ -1,0 +1,40 @@
+{% extends 'base.html' %} 
+
+{% block title %}Iniciar Sesión - Biblioteca UTH{% endblock %}
+
+{% block content %}
+<div class="login-container" style="max-width: 400px; margin: 50px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    
+    <h2 style="text-align: center; color: #333; margin-bottom: 25px;">Acceso Administrativo</h2>
+
+    {# Bloque para mostrar errores si el login falla #}
+    {% if form.errors %}
+        <div class="alert alert-danger" style="background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em;">
+            <p><strong>Error:</strong> El usuario o la contraseña son incorrectos.</p>
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="{{ form.username.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Usuario:</label>
+            {# Renderizamos el campo manualmente para añadirle estilo si el widget por defecto es simple #}
+            <input type="text" name="username" autofocus required id="id_username" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label for="{{ form.password.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Contraseña:</label>
+            <input type="password" name="password" required id="id_password" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        {# Input oculto para redireccionar al usuario a donde quería ir antes del login #}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <button type="submit" class="btn" style="width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.3s;">
+            Ingresar
+        </button>
+    </form>
+    
+</div>
+{% endblock %}
